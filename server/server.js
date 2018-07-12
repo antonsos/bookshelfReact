@@ -13,6 +13,7 @@ const { auth } = require('./middleware/auth');
 //config middleware express
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(express.static('client/build'));
 
 //config mongoose
 mongoose.Promise = global.Promise;
@@ -170,6 +171,14 @@ app.delete('/api/delete_book', (req, res) => {
     res.json(true);
   })
 })
+
+if(process.env.NODE_ENV === 'production') {
+  const path = require('path');
+
+  app.get('/*', (req, res) => {
+    res.sendfile(path.resolve(__dirname, '../client', 'build', 'index.html'))
+  })
+}
 
 app.listen(port, () => {
   console.log(`server start port: ${port}`)
